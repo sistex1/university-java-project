@@ -9,6 +9,13 @@
     * [<strong>File: mainscreen.html<strong>](#strongfile-mainscreenhtmlstrong-1)
     * [<strong>File: AboutPageController.java<strong>](#strongfile-aboutpagecontrollerjavastrong)
     * [<strong>File: about.html<strong>](#strongfile-abouthtmlstrong)
+  * [Part E](#eme-add-a-sample-inventory-appropriate-for-your-chosen-store-to-the-application-you-should-have-five-parts-and-five-products-in-your-sample-inventory-and-should-not-overwrite-existing-data-in-the-databaseem)
+    * [<strong>File: BootStrapData.java</strong>](#strongfile-bootstrapdatajavastrong)
+  * [Part F](#emf-add-a-buy-now-button-to-your-product-list-em)
+    * [<strong>mainscreen.html</strong>](#strongfile-mainscreenhtmlstrong-2)
+    * [<strong>AddProductController.java</strong>](#strongfile-addproductcontrollerjavastrong)
+    * [<strong>purchaseFail.html</strong>](#strongfile-purchasefailhtmlstrong-)
+    * [<strong>purchaseSuccess.html</strong>](#strongfile-purchasesuccesshtmlstrong-)
 <!-- TOC -->
 
 ---
@@ -293,28 +300,28 @@ Lines 45 - 80 &rarr; added 5 new prebuilts (products) to repository
     prebuiltA.setId(1);
     productRepository.save(prebuiltA);
 
-Product prebuiltB = new Product();
+    Product prebuiltB = new Product();
     prebuiltB.setName("MAXTEK Tekki gs20");
     prebuiltB.setInv(9);
     prebuiltB.setPrice(1999.99);
     prebuiltB.setId(2);
     productRepository.save(prebuiltB);
 
-Product prebuiltC = new Product();
+    Product prebuiltC = new Product();
     prebuiltC.setName("MAXTEK Cyber i66 Gold");
     prebuiltC.setInv(3);
     prebuiltC.setPrice(1199.99);
     prebuiltC.setId(3);
     productRepository.save(prebuiltC);
 
-Product prebuiltD = new Product();
+    Product prebuiltD = new Product();
     prebuiltD.setName("MAXTEK Cyber i55");
     prebuiltD.setInv(17);
     prebuiltD.setPrice(999.99);
     prebuiltD.setId(4);
     productRepository.save(prebuiltD);
 
-Product prebuiltE = new Product();
+    Product prebuiltE = new Product();
     prebuiltE.setName("MAXTEK Tekki gs20 START");
     prebuiltE.setInv(30);
     prebuiltE.setPrice(499.99);
@@ -363,5 +370,177 @@ Lines 82 - 117 &rarr; added two MAXTEK hardware products and three 3rd party har
         mobo.setPrice(129.99);
         outsourcedPartRepository.save(mobo);
 
+```
+---
+### <em>F)  Add a “Buy Now” button to your product list. </em>
+### <strong>File: mainscreen.html<strong>
+Line 149 &rarr; added a "Buy Now" button
+```html
+<a th:href="@{/buyPrebuilt(productID=${tempProduct.id})}" class="btn btn-primary btn-sm mb-3">Buy Now</a>
+```
+<br>
+
+### <strong>File: AddProductController.java<strong>
+Lines 55 - 66 &rarr; added a "buy prebuilt" method that checks if a prebuilt (product) is in inventory and returns a success/fail page based on available inventory 
+```java
+@GetMapping("/buyPrebuilt")
+    public String buyPrebuilt(@RequestParam("productID") int theId, Model theModel) {
+        ProductService productService = context.getBean(ProductServiceImpl.class);
+        Product prebuilt=productService.findById(theId);
+        int inv = prebuilt.getInv();
+        if(inv > 0){
+            prebuilt.setInv(inv-1);
+            productRepository.save(prebuilt);
+            return "purchaseSuccess";}
+        else{
+            return "purchaseFail";}
+    }
+```
+<br>
+
+### <strong>File: purchaseFail.html<strong> 
+Lines 1 - 67 &rarr; added new page that displays failure to purchase if the product had no inventory
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        .top{
+            background-color: #1e3a76;
+            color: white;
+        }
+        hr{
+            opacity: .5;
+        }
+        br{user-select: none}
+        .main-header{
+            text-align: center;
+            padding-top: 4px;
+            user-select: none;
+        }
+        body{
+            background-color: #3f5a88;
+        }
+        h2, h3{
+            text-align: center;
+            color: white;
+            margin-top: 4vh;
+        }
+        .btn{
+            display: block;
+            text-align: center;
+            width: 10vw;
+            background-color: #4d8abe;
+            color: white;
+            margin-top: auto;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            height: 15vh;
+        }
+    </style>
+    <title>Cannot Buy</title>
+    <link rel = "icon" type = "image/x-icon" href="/img/pcmouse.jpg">
+</head>
+<body>
+<div class="top">
+    <h1 class="main-header">MAXTEK</h1>
+    <hr>
+</div>
+<div>
+    <h2>Sorry about that...</h2>
+    <h3>Purchase failed. Check inventory, it may be unavailable.</h3>
+</div>
+<div class = "container">
+    <div class="btn-container">
+        <a href="/mainscreen" class="btn">Go Back</a>
+    </div>
+</div>
+</body>
+</html>
+```
+<br>
+
+### <strong>File: purchaseSuccess.html<strong> 
+Lines 1 - 68 &rarr; added new page that displays purchase success if the item was in inventory
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        .top{
+            background-color: #1e3a76;
+            color: white;
+        }
+        hr{
+            opacity: .5;
+        }
+        br{user-select: none}
+        .main-header{
+            text-align: center;
+            padding-top: 4px;
+            user-select: none;
+        }
+        body{
+            background-color: #3f5a88;
+        }
+        h2, h3{
+            text-align: center;
+            color: white;
+            margin-top: 4vh;
+        }
+        .btn{
+            display: block;
+            text-align: center;
+            width: 10vw;
+            background-color: #4d8abe;
+            color: white;
+            margin-top: auto;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            height: 15vh;
+        }
+    </style>
+    <title>Success!</title>
+    <link rel = "icon" type = "image/x-icon" href="/img/pcmouse.jpg">
+</head>
+<body>
+<div class="top">
+    <h1 class="main-header">MAXTEK</h1>
+    <hr>
+</div>
+<div>
+    <h2>Hooray!</h2>
+    <h3>Your purchase went through.</h3>
+
+</div>
+<div class = "container">
+    <div class="btn-container">
+        <a href="/mainscreen" class="btn">Go Back</a>
+    </div>
+</div>
+</body>
+</html>
 ```
 ---
