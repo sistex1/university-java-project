@@ -46,6 +46,7 @@ public class BootStrapData implements CommandLineRunner {
             Product prebuiltA = new Product();
             prebuiltA.setName("MAXTEK Cyber i77 Platinum");
             prebuiltA.setInv(5);
+            prebuiltA.setInv(5);
             prebuiltA.setPrice(2699.99);
             prebuiltA.setId(1);
             productRepository.save(prebuiltA);
@@ -83,6 +84,8 @@ public class BootStrapData implements CommandLineRunner {
             InhousePart tower = new InhousePart();
             tower.setName("MAXTEK Stealth ATX/Micro ATX ARGB");
             tower.setInv(100);
+            tower.setMinInv(1);
+            tower.setMaxInv(1200);
             tower.setId(255);
             tower.setPrice(97.59);
             inhousePartRepository.save(tower);
@@ -90,6 +93,8 @@ public class BootStrapData implements CommandLineRunner {
             InhousePart cooler = new InhousePart();
             cooler.setName("MAKTEK FLEX AIO Water Cooler (360mm)");
             cooler.setInv(67);
+            cooler.setMinInv(1);
+            cooler.setMaxInv(300);
             cooler.setId(1243);
             cooler.setPrice(114.47);
             inhousePartRepository.save(cooler);
@@ -98,6 +103,9 @@ public class BootStrapData implements CommandLineRunner {
             OutsourcedPart gpu =  new OutsourcedPart();
             gpu.setName("Avid-N STX 7300-S");
             gpu.setInv(200);
+            gpu.setMinInv(1);
+            gpu.setMaxInv(500);
+            gpu.setCompanyName("Avid-N");
             gpu.setId(50);
             gpu.setPrice(1859.79);
             outsourcedPartRepository.save(gpu);
@@ -105,6 +113,9 @@ public class BootStrapData implements CommandLineRunner {
             OutsourcedPart cpu =  new OutsourcedPart();
             cpu.setName("notel core j56S");
             cpu.setInv(137);
+            cpu.setMinInv(1);
+            cpu.setMaxInv(250);
+            cpu.setCompanyName("notel");
             cpu.setId(890);
             cpu.setPrice(323.49);
             outsourcedPartRepository.save(cpu);
@@ -112,6 +123,9 @@ public class BootStrapData implements CommandLineRunner {
             OutsourcedPart mobo =  new OutsourcedPart();
             mobo.setName("misi motherboard MEG X4390-C");
             mobo.setInv(790);
+            mobo.setMinInv(1);
+            mobo.setMaxInv(2000);
+            mobo.setCompanyName("misi");
             mobo.setId(577);
             mobo.setPrice(129.99);
             outsourcedPartRepository.save(mobo);
