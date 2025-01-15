@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.domain.Part;
 import com.example.demo.domain.Product;
+import com.example.demo.repositories.ProductRepository;
 import com.example.demo.service.PartService;
 import com.example.demo.service.PartServiceImpl;
 import com.example.demo.service.ProductService;
@@ -31,6 +32,8 @@ public class AddProductController {
     private List<Part> theParts;
     private static Product product1;
     private Product product;
+    @Autowired
+    private ProductRepository productRepository;
 
     @GetMapping("/showFormAddProduct")
     public String showFormAddPart(Model theModel) {
@@ -172,5 +175,17 @@ public class AddProductController {
         }
         theModel.addAttribute("availparts",availParts);
         return "productForm";
+    }
+    @GetMapping("/buyPrebuilt")
+    public String buyPrebuilt(@RequestParam("productID") int theId, Model theModel) {
+        ProductService productService = context.getBean(ProductServiceImpl.class);
+        Product prebuilt=productService.findById(theId);
+        int inv = prebuilt.getInv();
+        if(inv > 0){
+            prebuilt.setInv(inv-1);
+            productRepository.save(prebuilt);
+            return "purchaseSuccess";}
+        else{
+            return "purchaseFail";}
     }
 }
