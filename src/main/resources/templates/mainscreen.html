@@ -44,7 +44,7 @@
             outline: none;
         }
         .main-header{
-            padding-left: 50vw;
+            text-align: center;
             padding-top: 4px;
         }
         table{
@@ -58,6 +58,17 @@
             color: #1e1e76;
             font-weight: bold;
        }
+       .about-btn-container, .abt-btn{
+           display: block;
+           border-radius: 3px;
+           text-align: center;
+           width: 10vw;
+           background-color: #4d8abe;
+           margin-left: auto;
+           text-decoration: none;
+           color: white;
+           user-select: none;
+       }
     </style>
 </head>
 
@@ -67,6 +78,9 @@
     <div class = "top">
     <h1 class = "main-header">MAXTEK</h1>
     <hr>
+    </div>
+    <div class="about-btn-container">
+        <a href="/about" class="abt-btn">About Us</a>
     </div>
     <h2>System Components</h2>
     <form th:action="@{/mainscreen}">
