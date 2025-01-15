@@ -16,6 +16,17 @@
     * [<strong>AddProductController.java</strong>](#strongfile-addproductcontrollerjavastrong)
     * [<strong>purchaseFail.html</strong>](#strongfile-purchasefailhtmlstrong-)
     * [<strong>purchaseSuccess.html</strong>](#strongfile-purchasesuccesshtmlstrong-)
+  * [Part G](#emg-modify-the-parts-to-track-maximum-and-minimum-inventory-em-)
+    * [<strong>mainscreen.html</strong>](#strongfile-mainscreenhtmlstrong-3)
+    * [<strong>InhousePartForm.html</strong>](#strongfile-inhousepartformhtmlstrong)
+    * [<strong>OutsourcePartForm.html</strong>](#strongfile-outsourcepartformhtmlstrong)
+    * [<strong>InventoryValidator.java</strong>](#strongfile-inventoryvalidatorjavastrong)
+    * [<strong>ValidInventory.java</strong>](#strongfile-validinventoryjavastrong)
+    * [<strong>Part.java</strong>](#strongfile-partjavastrong)
+    * [<strong>BootStrapData.java</strong>](#strongfile-bootstrapdatajavastrong-1)
+    * [<strong>application.properties</strong>](#strongfile-applicationpropertiesstrong)
+    * [<strong>Additional Changes</strong>](#additional-changes)
+      * [<strong>productForm.html</strong>](#strongfile-productformhtmlstrong)
 <!-- TOC -->
 
 ---
@@ -542,5 +553,523 @@ Lines 1 - 68 &rarr; added new page that displays purchase success if the item wa
 </div>
 </body>
 </html>
+```
+---
+### <em>G) Modify the parts to track maximum and minimum inventory </em> 
+### <strong>File: mainscreen.html</strong>
+Lines 102 - 103 &rarr; added min/max inventory header cells in hardware/component table
+```html
+<th>Min Inventory</th>
+<th>Max Inventory</th>
+```
+Lines 112 - 113 &rarr; added min/max inventory to hardware/component table data
+```html
+<td th:text="${tempPart.minInv}">1</td>
+<td th:text="${tempPart.maxInv}">1</td>
+```
+<br>
+
+### <strong>File: InhousePartForm.html</strong>
+Lines 4 - 62 &rarr; changed html head to include styling, title, and favicon for consistency
+```html
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        .top{
+            background-color: #1e3a76;
+            color: white;
+        }
+        hr{
+            opacity: .5;
+        }
+        br{user-select: none}
+        .main-header{
+            text-align: center;
+            padding-top: 4px;
+            user-select: none;
+        }
+        body{
+            background-color: #3f5a88;
+            color: white;
+        }
+        h2, h3, .form-header{
+            text-align: center;
+            color: white;
+            margin-top: 2vh;
+        }
+        .btn{
+            display: block;
+            text-align: center;
+            width: 10vw;
+            background-color: #4d8abe;
+            color: white;
+            margin-top: auto;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 15vh;
+        }
+        input[type=text]{
+            color: #1e1e76;
+            font-weight: bold;
+        }
+        .form-control {
+
+            background: #a5c9d5;
+
+        }
+    </style>
+    <title>MAXTEK Hardware</title>
+    <link rel = "icon" type = "image/x-icon" href="/img/pcmouse.jpg">
+</head>
+```
+Lines 65 - 68 &rarr; added top page header 
+```html
+<div class="top">
+    <h1 class="main-header">MAXTEK</h1>
+    <hr>
+</div>
+```
+
+Line 69 &rarr; changes "inhouse part detail" header to "MAXTEK Hardware Detail"<br>
+```html
+<h1 class = "form-header">MAXTEK Hardware Detail</h1>
+```
+Lines 77 - 84 &rarr; added text that corresponds with each text input<br>
+```html
+    <p><strong class>Name</strong><input type="text" th:field="*{name}" placeholder="Name" class="form-control mb-4 col-4"/></p>
+
+    <p><strong class>Price</strong><input type="text" path="price" th:field="*{price}" placeholder= "Price" class="form-control mb-4 col-4"/></p>
+    <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}">Price Error</p>
+
+    <p><strong class>Inventory</strong><input type="text" path="inv" th:field="*{inv}" placeholder="Inventory" class="form-control mb-4 col-4"/></p>
+        <p th:if="${#fields.hasErrors('inv')}" th:errors="*{inv}">Inventory Error</p>
+
+        <p><strong class>ID</strong><input type="text" th:field="*{partId}" placeholder="Part ID" class="form-control mb-4 col-4"/></p>
+```
+Lines 86 - 89 &rarr; added min/max inventory text fields<br>
+```html
+        <p><strong class>Min Inventory</strong><input type="text" path="minInv" th:field="*{minInv}" placeholder="Min Inventory" class="form-control mb-4 col-4"/></p>
+        <p th:if="${#fields.hasErrors('minInv')}" th:errors="*{minInv}">Min Inventory Error</p>
+        <p><strong class>Max Inventory</strong><input type="text" path="maxInv" th:field="*{maxInv}" placeholder="Max Inventory" class="form-control mb-4 col-4"/></p>
+        <p th:if="${#fields.hasErrors('maxInv')}" th:errors="*{maxInv}">Max Inventory Error</p>
+```
+Lines 90 - 96 &rarr; added a check to see if inventory field has errors and displays them <br>
+```html
+        <div th:if="${#fields.hasAnyErrors()}">
+            <ul>
+                <li th:each="err: ${#fields.allErrors()}" th:text="${err}">
+
+                </li>
+            </ul>
+        </div>
+```
+Line 100 &rarr; changed return button text to "Go back"
+
+```html
+    <a href="http://localhost:8080/" class="btn">Go Back</a>
+```
+<br>
+
+### <strong>File: OutsourcePartForm.html</strong>
+Lines 4 - 62 &rarr; changed html head to include styling, title, and favicon for consistency
+```html
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        .top{
+            background-color: #1e3a76;
+            color: white;
+        }
+        hr{
+            opacity: .5;
+        }
+        br{user-select: none}
+        .main-header{
+            text-align: center;
+            padding-top: 4px;
+            user-select: none;
+        }
+        body{
+            background-color: #3f5a88;
+            color: white;
+        }
+        h2, h3, .form-header{
+            text-align: center;
+            color: white;
+            margin-top: 2vh;
+        }
+        .btn{
+            display: block;
+            text-align: center;
+            width: 10vw;
+            background-color: #4d8abe;
+            color: white;
+            margin-top: auto;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 15vh;
+        }
+        input[type=text]{
+            color: #1e1e76;
+            font-weight: bold;
+        }
+        .form-control {
+
+            background: #a5c9d5;
+
+        }
+    </style>
+    <title>3rd Party Hardware</title>
+    <link rel = "icon" type = "image/x-icon" href="/img/pcmouse.jpg">
+</head>
+```
+Lines 64 - 67 &rarr; added top page header 
+```html
+<div class="top">
+    <h1 class="main-header">MAXTEK</h1>
+    <hr>
+</div>
+```
+Line 69 &rarr; changes "outsource part detail" header to "3rd Party Hardware Detail"
+```html
+<h1 class = "form-header">MAXTEK Hardware Detail</h1>
+```
+Lines 76 - 84 &rarr; added text that corresponds with each text input
+```html
+    <p><strong class>Name</strong><input type="text" th:field="*{name}" placeholder="Name" class="form-control mb-4 col-4"/></p>
+
+    <p><strong class>Price</strong><input type="text" path="price" th:field="*{price}" placeholder= "Price" class="form-control mb-4 col-4"/></p>
+    <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}">Price Error</p>
+
+    <p><strong class>Inventory</strong><input type="text" path="inv" th:field="*{inv}" placeholder="Inventory" class="form-control mb-4 col-4"/></p>
+        <p th:if="${#fields.hasErrors('inv')}" th:errors="*{inv}">Inventory Error</p>
+
+        <p><strong class>ID</strong><input type="text" th:field="*{partId}" placeholder="Part ID" class="form-control mb-4 col-4"/></p>
+```
+Lines 86 - 89 &rarr; added min/max inventory text fields
+```html
+        <p><strong class>Min Inventory</strong><input type="text" path="minInv" th:field="*{minInv}" placeholder="Min Inventory" class="form-control mb-4 col-4"/></p>
+        <p th:if="${#fields.hasErrors('minInv')}" th:errors="*{minInv}">Min Inventory Error</p>
+        <p><strong class>Max Inventory</strong><input type="text" path="maxInv" th:field="*{maxInv}" placeholder="Max Inventory" class="form-control mb-4 col-4"/></p>
+        <p th:if="${#fields.hasErrors('maxInv')}" th:errors="*{maxInv}">Max Inventory Error</p>
+```
+Lines 91 - 97 &rarr; added a check to see if inventory field has errors and displays them
+```html
+ <div th:if="${#fields.hasAnyErrors()}">
+            <ul>
+                <li th:each="err: ${#fields.allErrors()}" th:text="${err}">
+
+                </li>
+            </ul>
+        </div>
+```
+Line 100 &rarr; changed return button text to "Go back"
+
+```html
+    <a href="http://localhost:8080/" class="btn">Go Back</a>
+```
+<br>
+
+### <strong>File: InventoryValidator.java</strong>
+Lines 1 - 42 &rarr; created a new validator file that checks if the max inventory is exceeded or min inventory is less than what is allowed
+```java
+package com.example.demo.validators;
+
+import com.example.demo.domain.Part;
+import com.example.demo.domain.Product;
+import com.example.demo.service.ProductService;
+import com.example.demo.service.ProductServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+/**
+ *
+ *
+ *
+ *
+ */
+public class InventoryValidator implements ConstraintValidator<ValidInventory, Part> {
+    @Autowired
+    private ApplicationContext context;
+    public static  ApplicationContext myContext;
+    @Override
+    public void initialize(ValidInventory constraintAnnotation) {
+        ConstraintValidator.super.initialize(constraintAnnotation);
+    }
+
+    @Override
+    public boolean isValid(Part part, ConstraintValidatorContext constraintValidatorContext) {
+        if(part.getInv() > part.getMaxInv()){
+            constraintValidatorContext.buildConstraintViolationWithTemplate("Inventory maxed out").addConstraintViolation();
+            return false;
+        }
+        if(part.getInv() < part.getMinInv()){
+            constraintValidatorContext.buildConstraintViolationWithTemplate("Inventory below minimum allowed").addConstraintViolation();
+            return false;
+        }
+
+        return true;
+    }
+}
+
+```
+
+<br>
+
+### <strong>File: ValidInventory.java</strong>
+Lines 1 - 24 &rarr; created a new file that validates the status of inventory when parts are updated
+```java
+package com.example.demo.validators;
+
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ *
+ *
+ *
+ *
+ */
+@Constraint(validatedBy = {InventoryValidator.class})
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ValidInventory {
+    String message() default "Inventory Error";
+    Class<?> [] groups() default {};
+    Class<? extends Payload> [] payload() default {};
+
+}
+
+```
+
+<br>
+
+### <strong>File: Part.java</strong>
+
+Line 23 &rarr; added annotation in reference to ValidInventory interface
+
+```java
+@ValidInventory
+```
+
+Lines 34 - 38 &rarr; created max/min inventory values
+```java
+    @Min(value = 0, message = "Min inventory value must be positive")
+    int minInv;
+    
+    @Min(value = 0, message = "Max inventory value must be positive")
+    int maxInv;
+```
+Lines 91 - 97 &rarr; added getters and setters for max/min inventory values
+```java
+    public int getMaxInv() {return maxInv;}
+
+    public void setMaxInv(int maxInv) {this.maxInv = maxInv;}
+
+    public int getMinInv() {return minInv;}
+
+    public void setMinInv(int minInv) {this.minInv = minInv;}
+```
+<br>
+
+### <strong>File: BootStrapData.java</strong>
+
+Lines 83 - 101 &rarr; updated inhouse parts data to include min/max inventory values
+```java
+        if(inhousePartRepository.count() == 0) {
+            InhousePart tower = new InhousePart();
+            tower.setName("MAXTEK Stealth ATX/Micro ATX ARGB");
+            tower.setInv(100);
+            tower.setMinInv(1);
+            tower.setMaxInv(1200);
+            tower.setId(255);
+            tower.setPrice(97.59);
+            inhousePartRepository.save(tower);
+
+            InhousePart cooler = new InhousePart();
+            cooler.setName("MAKTEK FLEX AIO Water Cooler (360mm)");
+            cooler.setInv(67);
+            cooler.setMinInv(1);
+            cooler.setMaxInv(300);
+            cooler.setId(1243);
+            cooler.setPrice(114.47);
+            inhousePartRepository.save(cooler);
+        }
+```
+
+Lines 102 - 132 &rarr; updated outsource parts data to include min/max inventory values as well as initialized company names
+```java
+        if(outsourcedPartRepository.count() == 0){
+            OutsourcedPart gpu =  new OutsourcedPart();
+            gpu.setName("Avid-N STX 7300-S");
+            gpu.setInv(200);
+            gpu.setMinInv(1);
+            gpu.setMaxInv(500);
+            gpu.setCompanyName("Avid-N");
+            gpu.setId(50);
+            gpu.setPrice(1859.79);
+            outsourcedPartRepository.save(gpu);
+
+            OutsourcedPart cpu =  new OutsourcedPart();
+            cpu.setName("notel core j56S");
+            cpu.setInv(137);
+            cpu.setMinInv(1);
+            cpu.setMaxInv(250);
+            cpu.setCompanyName("notel");
+            cpu.setId(890);
+            cpu.setPrice(323.49);
+            outsourcedPartRepository.save(cpu);
+
+            OutsourcedPart mobo =  new OutsourcedPart();
+            mobo.setName("misi motherboard MEG X4390-C");
+            mobo.setInv(790);
+            mobo.setMinInv(1);
+            mobo.setMaxInv(2000);
+            mobo.setCompanyName("misi");
+            mobo.setId(577);
+            mobo.setPrice(129.99);
+            outsourcedPartRepository.save(mobo);
+        }
+```
+<br>
+
+### <strong>File: application.properties</strong>
+Line 6 &rarr; renamed end of spring.datasource.url to /SzalaiDB-4
+```properties
+spring.datasource.url=jdbc:h2:file:~/SzalaiDB-4
+```
+
+## Additional Changes
+### <strong>File: productForm.html</strong>
+Lines 4 - 69 &rarr; changed html head to include styling, title, and favicon for consistency
+```html
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        .top{
+            background-color: #1e3a76;
+            color: white;
+        }
+        hr{
+            opacity: .5;
+        }
+        br{user-select: none}
+        .main-header{
+            text-align: center;
+            padding-top: 4px;
+            user-select: none;
+        }
+        body{
+            background-color: #3f5a88;
+            color: white;
+        }
+        h2, h3, .form-header{
+            text-align: center;
+            color: white;
+            margin-top: 2vh;
+        }
+        .btn{
+            display: block;
+            text-align: center;
+            width: 10vw;
+            background-color: #4d8abe;
+            color: white;
+            margin-top: auto;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 2vh;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 15vh;
+        }
+        input[type=text]{
+            color: #1e1e76;
+            font-weight: bold;
+        }
+        .form-control {
+
+            background: #a5c9d5;
+
+        }
+        table{
+            background-color: #698d9b;
+            border-radius: 2px;
+            box-shadow: 0px 0px 0px 5px #a5c9d5;
+        }
+        tbody{
+            font-weight: bold;
+        }
+    </style>
+</head>
+```
+Lines 71 - 74 &rarr; added top page header
+```html
+<div class="top">
+    <h1 class="main-header">MAXTEK</h1>
+    <hr>
+</div>
+```
+Line 76 &rarr; changed form header text to "Prebuilt Detail"
+```html
+<h1 class="form-header">Prebuilt Detail</h1>
+```
+Lines 81 - 86 &rarr; added text to correspond with text input
+```html
+    <p><input type="hidden" th:field="*{id}"/></p>
+
+    <p><strong>Name</strong><input type="text" th:field="*{name}" placeholder="Name" class="form-control mb-4 col-4"/></p>
+
+    <p><strong>Price</strong><input type="text" th:field="*{price}" placeholder= "Price" class="form-control mb-4 col-4"/></p>
+
+
+    <p><strong>Inventory</strong><input type="text" th:field="*{inv}" placeholder="Inventory" class="form-control mb-4 col-4"/></p>
+
+```
+Line 99 &rarr; changed first table header to "Available Hardware"
+```html
+<h2>Available Hardware</h2>
+```
+Line 99 &rarr; changed second table header to "Associated Hardware"
+```html
+<h2>Associated Hardware</h2>
+```
+Line 138 &rarr; uncommented and changed a footer with link back to mainscreen labelled "Go Back"
+```html
+<footer><a href="http://localhost:8080/" class = "btn">Go Back</a></footer>
 ```
 ---
