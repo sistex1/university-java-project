@@ -92,7 +92,16 @@ Line 73 &rarr; changed input to include "filter-box" class for styling
 ```html
 Filter: <input type="text" name="partkeyword" id="partkeyword" class = "filter-box" size="50" th:value="${partkeyword}" required />
 ```
-
+Lines 80 - 81 &rarr; changed inhouse and outsourced buttons' text to MAXTEK and 3rd party hardware respectively
+```html
+<a th:href="@{/showFormAddInPart}" class="btn btn-primary btn-sm mb-3">Add MAXTEK Hardware</a>
+<a th:href="@{/showFormAddOutPart}" class="btn btn-primary btn-sm mb-3">Add 3rd Party Hardware</a>
+```
+Lines 97 - 98 &rarr; changed text in delete part prompt to say "item" instead of "part"
+```html
+<a th:href="@{/deletepart(partID=${tempPart.id})}" class="btn btn-primary btn-sm mb-3"
+                   onclick="if(!(confirm('Are you sure you want to delete this item?')))return false">Delete</a>
+```
 Line 103 &rarr; changed header from "Products" to "Prebuilt Systems"
 ```html
 <h2>Prebuilt Systems</h2>
@@ -106,6 +115,11 @@ Filter: <input type="text" name="productkeyword" id="productkeyword" class = "fi
 Line 117 &rarr; changed button text to "Add Prebuilt"
 ```html
 <a th:href="@{/showFormAddProduct}" class="btn btn-primary btn-sm mb-3">Add Prebuilt</a>
+```
+Lines 133 - 134 &rarr; changed text in delete product prompt to say "prebuilt" instead of "product"
+```html
+<a th:href="@{/deleteproduct(productID=${tempProduct.id})}" class="btn btn-primary btn-sm mb-3"
+                   onclick="if(!(confirm('Are you sure you want to delete this prebuilt?')))return false">Delete</a>
 ```
 ---
 
