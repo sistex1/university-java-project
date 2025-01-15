@@ -1035,6 +1035,8 @@ Lines 4 - 69 &rarr; changed html head to include styling, title, and favicon for
             font-weight: bold;
         }
     </style>
+    <title>Prebuilts</title>
+    <link rel = "icon" type = "image/x-icon" href="/img/pcmouse.jpg">
 </head>
 ```
 Lines 71 - 74 &rarr; added top page header
