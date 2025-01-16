@@ -35,6 +35,8 @@
     * [<strong>EnufPartsValidator.java</strong>](#strongfile-enufpartsvalidatorjavastrong)
     * [<strong>Part.java</strong>](#strongfile-partjavastrong-1)
     * [<strong>application.properties</strong>](#strongfile-applicationpropertiesstrong-1)
+  * [Part I](#emi-add-at-least-two-unit-tests-for-the-maximum-and-minimum-fields-to-the-parttest-class-in-the-test-packageem)
+    * [<strong>PartTest.java</strong>](#strongfile-parttestjavastrong)
 <!-- TOC -->
 
 ---
@@ -1266,3 +1268,26 @@ spring.datasource.url=jdbc:h2:file:~/SzalaiDB-5
 ```
 
 ---
+
+### <em>I) Add at least two unit tests for the maximum and minimum fields to the PartTest class in the test package.</em>
+### <strong>File: PartTest.java<strong>
+Lines 160 - 176 &rarr; added two unit tests for setters of Max/Min inventory within part class
+```java
+    @Test
+    void setMinInv(){
+        int min = 3;
+        partIn.setMinInv(min);
+        assertEquals(min, partIn.getMinInv());
+        partOut.setMinInv(min);
+        assertEquals(min, partOut.getMinInv());
+    }
+
+    @Test
+    void setMaxInv(){
+        int max = 3000;
+        partIn.setMaxInv(max);
+        assertEquals(max, partIn.getMaxInv());
+        partOut.setMaxInv(max);
+        assertEquals(max, partOut.getMaxInv());
+    }
+```
