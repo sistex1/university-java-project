@@ -37,6 +37,8 @@
     * [<strong>application.properties</strong>](#strongfile-applicationpropertiesstrong-1)
   * [Part I](#emi-add-at-least-two-unit-tests-for-the-maximum-and-minimum-fields-to-the-parttest-class-in-the-test-packageem)
     * [<strong>PartTest.java</strong>](#strongfile-parttestjavastrong)
+  * [Part J](#emj-remove-the-class-files-for-any-unused-validators-in-order-to-clean-your-codeem)
+    * [<strong>Files Deleted</strong>](#stronginsfiles-removedinsstrong)
 <!-- TOC -->
 
 ---
@@ -1291,3 +1293,10 @@ Lines 160 - 176 &rarr; added two unit tests for setters of Max/Min inventory wit
         assertEquals(max, partOut.getMaxInv());
     }
 ```
+---
+
+### <em>J) Remove the class files for any unused validators in order to clean your code.</em>
+### <strong><ins>Files Deleted</ins></strong>
+
+* ### <strong>DeletePartValidator.java</strong>
+* ### <strong>ValidDeletePart.java</strong>
