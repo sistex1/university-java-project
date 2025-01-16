@@ -32,8 +32,15 @@ public class EnufPartsValidator implements ConstraintValidator<ValidEnufParts, P
         ProductService repo = myContext.getBean(ProductServiceImpl.class);
         if (product.getId() != 0) {
             Product myProduct = repo.findById((int) product.getId());
+            int notEnufCount = 0;
             for (Part p : myProduct.getParts()) {
-                if (p.getInv()<(product.getInv()-myProduct.getInv()))return false;
+                if (p.getInv()<=(product.getInv()-myProduct.getInv()-1)) {
+                    ++notEnufCount;
+                    constraintValidatorContext.buildConstraintViolationWithTemplate("Associated hardware '" + p.getName() + "' too low in inventory").addConstraintViolation();
+                }
+            }
+            if (notEnufCount > 0){
+                return false;
             }
             return true;
         }
