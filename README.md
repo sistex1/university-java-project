@@ -27,6 +27,14 @@
     * [<strong>application.properties</strong>](#strongfile-applicationpropertiesstrong)
     * [<strong>Additional Changes</strong>](#additional-changes)
       * [<strong>productForm.html</strong>](#strongfile-productformhtmlstrong)
+  * [Part H](#emh-add-validation-for-between-or-at-the-maximum-and-minimum-fieldsem)
+    * [<strong>MinValidator.java</strong>](#strongfile-minvalidatorjavastrong)
+    * [<strong>ValidMin.java</strong>](#strongfile-validminjavastrong)
+    * [<strong>MaxValidator.java</strong>](#strongfile-maxvalidatorjavastrong)
+    * [<strong>ValidMax.java</strong>](#strongfile-validmaxjavastrong)
+    * [<strong>EnufPartsValidator.java</strong>](#strongfile-enufpartsvalidatorjavastrong)
+    * [<strong>Part.java</strong>](#strongfile-partjavastrong-1)
+    * [<strong>application.properties</strong>](#strongfile-applicationpropertiesstrong-1)
 <!-- TOC -->
 
 ---
@@ -1074,4 +1082,187 @@ Line 138 &rarr; uncommented and changed a footer with link back to mainscreen la
 ```html
 <footer><a href="http://localhost:8080/" class = "btn">Go Back</a></footer>
 ```
+---
+
+### <em>H) Add validation for between or at the maximum and minimum fields.</em>
+### <strong>File: MinValidator.java</strong>
+Lines 1 - 32 &rarr; added new validator file for minimum inventory
+```java
+package com.example.demo.validators;
+
+import com.example.demo.domain.Part;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+/**
+ *
+ *
+ *
+ *
+ */
+public class MinValidator implements ConstraintValidator<ValidMin, Part> {
+    @Autowired
+    private ApplicationContext context;
+    public static  ApplicationContext myContext;
+    @Override
+    public void initialize(ValidMin constraintAnnotation) {
+        ConstraintValidator.super.initialize(constraintAnnotation);
+    }
+
+    @Override
+    public boolean isValid(Part part, ConstraintValidatorContext constraintValidatorContext) {
+        if (part.getInv() >= part.getMinInv()){
+            return true;
+        }
+        return false;
+    }
+}
+
+```
+<br>
+
+### <strong>File: ValidMin.java</strong>
+Lines 1 - 24 &rarr; added new file with interface to work with MinValidator.java and send error custom message
+```java
+package com.example.demo.validators;
+
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ *
+ *
+ *
+ *
+ */
+@Constraint(validatedBy = {MinValidator.class})
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ValidMin {
+    String message() default "Below minimum allowed inventory";
+    Class<?> [] groups() default {};
+    Class<? extends Payload> [] payload() default {};
+
+}
+
+```
+<br>
+
+### <strong>File: MaxValidator.java</strong>
+Lines 1 - 29 &rarr; added new validator file for minimum inventory
+```java
+package com.example.demo.validators;
+
+import com.example.demo.domain.Part;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+/**
+ *
+ *
+ *
+ *
+ */
+public class MaxValidator implements ConstraintValidator<ValidMax, Part> {
+    @Autowired
+    private ApplicationContext context;
+    public static  ApplicationContext myContext;
+    @Override
+    public void initialize(ValidMax constraintAnnotation) {
+        ConstraintValidator.super.initialize(constraintAnnotation);
+    }
+
+    @Override
+    public boolean isValid(Part part, ConstraintValidatorContext constraintValidatorContext) {
+        return part.getMaxInv() >= part.getInv();
+    }
+}
+
+```
+
+### <strong>File: ValidMax.java</strong>
+Lines 1 - 24 &rarr; added new file with interface to work with MaxValidator.java and send error custom message
+```java
+package com.example.demo.validators;
+
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ *
+ *
+ *
+ *
+ */
+@Constraint(validatedBy = {MaxValidator.class})
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ValidMax {
+    String message() default "Exceeds allowed inventory";
+    Class<?> [] groups() default {};
+    Class<? extends Payload> [] payload() default {};
+
+}
+
+
+```
+<br>
+
+### <strong>File: EnufPartsValidator.java</strong>
+Lines 28 - 59 &rarr; modified isValid method to check if parts used for a product go below the minimum and sends custom message per part
+```java
+    @Override
+    public boolean isValid(Product product, ConstraintValidatorContext constraintValidatorContext) {
+        if(context==null) return true;
+        if(context!=null)myContext=context;
+        ProductService repo = myContext.getBean(ProductServiceImpl.class);
+        if (product.getId() != 0) {
+            Product myProduct = repo.findById((int) product.getId());
+            int notEnufCount = 0;
+            for (Part p : myProduct.getParts()) {
+                if (p.getInv()<=(product.getInv()-myProduct.getInv()-1)) {
+                    ++notEnufCount;
+                    constraintValidatorContext.buildConstraintViolationWithTemplate("Associated hardware '" + p.getName() + "' too low in inventory").addConstraintViolation();
+                }
+            }
+            if (notEnufCount > 0){
+                return false;
+            }
+            return true;
+        }
+        else{
+                return true;
+            }
+    }
+```
+<br>
+
+### <strong>File: Part.java</strong>
+Lines 26 - 27 &rarr; added ValidMin/ValidMax annotations to utilize validators
+```java
+@ValidMax
+@ValidMin
+```
+<br>
+
+### <strong>File: application.properties</strong>
+Line 6 &rarr; changed datasource url end to ".../SzalaiDB-5"
+```properties
+spring.datasource.url=jdbc:h2:file:~/SzalaiDB-5
+```
+
 ---
