@@ -1,5 +1,5 @@
 
-# WESTERN GOVERNORS UNIVERSITY <br><sup>D287 – JAVA FRAMEWORKS</sup>
+#University Java Project
 
 ## <ins>Changes</ins>
 <!-- TOC -->
